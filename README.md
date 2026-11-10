@@ -1,9 +1,10 @@
 # Копилка
 
 [![CI](https://github.com/MeldanLess/kopilka/actions/workflows/ci.yml/badge.svg)](https://github.com/MeldanLess/kopilka/actions/workflows/ci.yml)
+[![Релиз v1.0.0](https://img.shields.io/badge/релиз-v1.0.0-0f7b4f.svg)](https://github.com/MeldanLess/kopilka/releases/tag/v1.0.0)
 ![Python 3.12](https://img.shields.io/badge/python-3.12-4338ca.svg)
 ![Node 20](https://img.shields.io/badge/node-20-339933.svg)
-![License: MIT](https://img.shields.io/badge/License-MIT-0f7b4f.svg)
+![Лицензия: MIT](https://img.shields.io/badge/лицензия-MIT-0f7b4f.svg)
 
 **Исходники:** https://github.com/MeldanLess/kopilka
 
@@ -237,6 +238,9 @@ SQLite: `NUMERIC` для денег, нативные `enum`, колонки `UU
 - Мобильное приложение.
 - Импорт из банковских выписок.
 - Ограничение частоты запросов на вход (rate limiting).
+- Сквозной E2E-тест основного сценария — сейчас бэкенд и фронтенд проверяются
+  по отдельности, и связка между ними не покрыта. Как это сделать, обсуждается
+  в [issue #1](https://github.com/MeldanLess/kopilka/issues/1).
 
 ---
 
