@@ -290,10 +290,7 @@ def _month_bounds(year: int, month: int) -> tuple[date, date]:
     дне месяца и не зависит от того, как именно хранится время операции.
     """
     start = date(year, month, 1)
-    if month == 12:
-        end = date(year + 1, 1, 1)
-    else:
-        end = date(year, month + 1, 1)
+    end = date(year + 1, 1, 1) if month == 12 else date(year, month + 1, 1)
     return start, end
 
 
