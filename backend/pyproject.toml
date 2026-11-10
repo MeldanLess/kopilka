@@ -1,0 +1,71 @@
+[project]
+name = "kopilka-api"
+version = "0.1.0"
+description = "Личный финансовый трекер: доходы, расходы, категории и сводка по месяцу."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "Your Name" }]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["app", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # ошибки pycodestyle
+    "W",   # предупреждения pycodestyle
+    "F",   # pyflakes
+    "I",   # порядок импортов
+    "B",   # flake8-bugbear
+    "C4",  # генераторные выражения
+    "UP",  # pyupgrade
+    "SIM", # упрощение
+    "ARG", # неиспользуемые аргументы
+]
+ignore = [
+    # `Depends()` и `Query()` в аргументах по умолчанию — документированный
+    # приём FastAPI, без него описание параметров запроса невозможно.
+    "B008",
+    # `*args`/`**kwargs` в нескольких помощниках используются намеренно.
+    "ARG001",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# В `alembic/env.py` импорт пакета `app` идёт после `sys.path.insert` — иначе
+# Alembic не найдёт приложение. Это E402, но здесь он уместен.
+"alembic/*" = ["E402"]
+
+[tool.ruff.lint.isort]
+# `app` — собственный пакет проекта. Без этой строки ruff считает его
+# сторонней библиотекой и требует переставить импорты в неправильном порядке.
+known-first-party = ["app"]
+# Импорт с псевдонимом (`Enum as SAEnum`) держим в одном блоке с остальными
+# именами из того же модуля — так его и читать удобнее.
+combine-as-imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+# Корень бэкенда добавляем в `sys.path` явно: пакет `tests` не имеет
+# `__init__.py`, и без этой строки pytest добавит в путь каталог `tests/`,
+# из-за чего `import app` в `conftest.py` падает с ModuleNotFoundError.
+pythonpath = ["."]
+addopts = "--strict-markers --strict-config"
+filterwarnings = [
+    "error::DeprecationWarning:app.*",
+]
+
+[tool.coverage.run]
+source = ["app"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+]

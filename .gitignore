@@ -1,0 +1,45 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# --- Виртуальные окружения ---
+.venv/
+venv/
+env/
+
+# --- Node ---
+node_modules/
+dist/
+coverage/
+*.log
+npm-debug.log*
+
+# --- Окружение и секреты ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# --- Редакторы ---
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- Операционная система ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Локальные данные ---
+*.db
+*.sqlite3
+postgres_data/
