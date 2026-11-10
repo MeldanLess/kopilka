@@ -21,7 +21,7 @@
 ## Запуск локально
 
 ```bash
-npm install
+npm ci          # точные версии зависимостей из package-lock.json
 cp .env.example .env   # адрес API, по умолчанию http://localhost:8000
 npm run dev
 ```
@@ -31,9 +31,10 @@ npm run dev
 ## Проверки
 
 ```bash
-npm run lint    # ESLint
-npm run build   # проверка типов (tsc --noEmit) и сборка
-npm test        # Vitest
+npm run lint           # ESLint
+npm run build          # проверка типов (tsc --noEmit) и сборка
+npm test               # Vitest
+npm run test:coverage  # Vitest и отчёт о покрытии
 ```
 
 Типы проверяются во время сборки: интерфейс и API разъехаться не могут,

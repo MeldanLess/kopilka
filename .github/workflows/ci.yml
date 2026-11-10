@@ -87,12 +87,12 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          # Кэшируем по package.json: lock-файла в репозитории пока нет, он
-          # появится после первой локальной установки.
-          cache-dependency-path: frontend/package.json
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Ставим зависимости
-        run: npm install
+        # `npm ci` ставит ровно то, что записано в lock-файле, и падает,
+        # если lock-файл разошёлся с package.json.
+        run: npm ci
 
       - name: Проверяем стиль
         run: npm run lint
@@ -100,8 +100,8 @@ jobs:
       - name: Проверяем типы и тесты
         run: npm run build
 
-      - name: Запускаем тесты
-        run: npm test
+      - name: Запускаем тесты и считаем покрытие
+        run: npm run test:coverage
 
       - name: Выкладываем отчёт о покрытии
         uses: actions/upload-artifact@v4
