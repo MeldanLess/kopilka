@@ -1,0 +1,440 @@
+/*
+ * Таблица стилей «Копилки».
+ *
+ * Светлая и тёмная палитра задана кастомными свойствами CSS: браузер сам
+ * выбирает нужную, а компоненты не знают про переключение тем.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  --bg: #ffffff;
+  --text: #17181c;
+  --text-soft: #5f636b;
+  --accent: #4338ca;
+  --surface: #f6f6f8;
+  --line: #e2e2e7;
+  --income: #16a34a;
+  --expense: #dc2626;
+  --negative: #b91c1c;
+
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #101114;
+    --text: #f2f2f4;
+    --text-soft: #a3a6ad;
+    --accent: #a5b4fc;
+    --surface: #1a1b1f;
+    --line: #2b2c32;
+    --income: #4ade80;
+    --expense: #f87171;
+    --negative: #f87171;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+h1 {
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  letter-spacing: -0.02em;
+  margin: 0 0 0.25rem;
+}
+
+h2 {
+  font-size: 1.15rem;
+  margin: 0 0 0.75rem;
+}
+
+h3 {
+  font-size: 0.95rem;
+  margin: 1rem 0 0.35rem;
+  color: var(--text-soft);
+  text-transform: lowercase;
+}
+
+p {
+  color: var(--text-soft);
+  margin: 0.25rem 0;
+}
+
+.muted {
+  color: var(--text-soft);
+  font-size: 0.9rem;
+}
+
+.error {
+  color: var(--negative);
+  background: color-mix(in srgb, var(--negative) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--negative) 30%, transparent);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* --- Формы --- */
+
+label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-soft);
+}
+
+label.inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-right: 1rem;
+}
+
+input,
+select {
+  display: block;
+  width: 100%;
+  margin-top: 0.2rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+
+label.inline input,
+label.inline select {
+  display: inline-block;
+  width: auto;
+  margin-top: 0;
+}
+
+input[type='color'] {
+  padding: 0.1rem;
+  height: 2.2rem;
+  width: 3rem;
+}
+
+/* --- Кнопки --- */
+
+.button {
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.button--primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
+}
+
+.button--primary:hover:not(:disabled) {
+  color: #ffffff;
+  opacity: 0.9;
+}
+
+.button--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-soft);
+  font-size: 0.85rem;
+  padding: 0.25rem 0.5rem;
+}
+
+/* --- Вкладки --- */
+
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.tab {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-soft);
+  font: inherit;
+  cursor: pointer;
+}
+
+.tab--active {
+  background: var(--surface);
+  border-color: var(--line);
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* --- Экран входа --- */
+
+.auth {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.auth__card {
+  width: 100%;
+  max-width: 26rem;
+  padding: 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface);
+}
+
+.auth__card form {
+  margin-top: 0.5rem;
+}
+
+.auth__card .button {
+  width: 100%;
+}
+
+/* --- Главный экран --- */
+
+.app {
+  max-width: 68rem;
+  margin-inline: auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+.app__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.app__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.app__period {
+  margin: 1.5rem 0 1rem;
+  font-size: 1.4rem;
+}
+
+.loading,
+.fallback {
+  max-width: 40rem;
+  margin: 4rem auto;
+  padding: 0 1.25rem;
+  text-align: center;
+}
+
+/* --- Карточки итогов --- */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.75rem;
+}
+
+.card {
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface);
+}
+
+.card__label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-soft);
+}
+
+.card__value {
+  display: block;
+  font-size: 1.35rem;
+  letter-spacing: -0.01em;
+}
+
+.card__value--income {
+  color: var(--income);
+}
+
+.card__value--expense {
+  color: var(--expense);
+}
+
+.card__value--balance {
+  color: var(--text);
+}
+
+.card__value--negative {
+  color: var(--negative);
+}
+
+/* --- Панели --- */
+
+.panel {
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+/* --- Графики --- */
+
+.chart {
+  display: block;
+}
+
+.legend {
+  list-style: none;
+  margin: 0.5rem 0;
+  padding: 0;
+  font-size: 0.85rem;
+}
+
+.legend__item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.1rem 0;
+}
+
+.legend__dot {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  margin-right: 0.35rem;
+}
+
+.legend__name {
+  flex: 1;
+}
+
+.legend__share {
+  color: var(--text-soft);
+}
+
+/* --- Таблица операций --- */
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.table th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-soft);
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.table td {
+  padding: 0.4rem 0.5rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+.amount {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.amount--income {
+  color: var(--income);
+}
+
+.amount--expense {
+  color: var(--text);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+/* --- Категории --- */
+
+.category-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.category-form label {
+  flex: 1 1 8rem;
+  margin-bottom: 0;
+}
+
+.category-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.category-list__item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.15rem 0;
+}
+
+.category-list__item span:nth-child(2) {
+  flex: 1;
+}
