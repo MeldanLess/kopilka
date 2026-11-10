@@ -1,0 +1,38 @@
+# --- Зависимости ---
+node_modules/
+.pnp
+.pnp.js
+
+# --- Сборка ---
+dist/
+dist-ssr/
+*.local
+build/
+
+# --- Тесты ---
+coverage/
+.vitest/
+
+# --- Окружение и секреты ---
+.env
+.env.*
+!.env.example
+
+# --- Редакторы ---
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- Операционная система ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Логи ---
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+*.log
