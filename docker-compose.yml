@@ -1,0 +1,65 @@
+# Весь стек одной командой: PostgreSQL + API + фронтенд.
+#
+#   docker compose up --build           # запустить всё
+#   docker compose exec api alembic upgrade head
+#   docker compose exec api python -m app.seed   # демо-данные
+#   docker compose down -v              # остановить и удалить том с базой
+#
+# Фронтенд собирается статикой и раздаётся nginx'ом, а API доступен напрямую
+# по адресу http://localhost:8000 — так настройки CORS работают сразу, без
+# обратного прокси.
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: kopilka-db
+    environment:
+      POSTGRES_USER: kopilka
+      POSTGRES_PASSWORD: kopilka
+      POSTGRES_DB: kopilka
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      # API дожидается, пока эта проверка пройдёт, поэтому он никогда не
+      # стартует против базы, которая ещё инициализируется.
+      test: ["CMD-SHELL", "pg_isready -U kopilka -d kopilka"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  api:
+    build: ./backend
+    container_name: kopilka-api
+    environment:
+      DATABASE_URL: postgresql+psycopg://kopilka:kopilka@db:5432/kopilka
+      SECRET_KEY: dev-only-insecure-secret-key-change-me
+      ENVIRONMENT: development
+      SQL_ECHO: "false"
+      LOG_LEVEL: INFO
+      LOG_FORMAT: console
+      # Фронтенд на 5173 — локальный адрес Vite.
+      CORS_ORIGINS: http://localhost:5173,http://localhost:4173
+    volumes:
+      # Монтируем исходники, чтобы `--reload` видел правки без пересборки.
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+
+  frontend:
+    build: ./frontend
+    container_name: kopilka-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
