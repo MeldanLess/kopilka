@@ -177,7 +177,7 @@ pytest --cov=app --cov-report=term-missing
 
 ```bash
 cd frontend
-npm install
+npm ci          # точные версии зависимостей из package-lock.json
 npm run dev
 ```
 
@@ -214,8 +214,17 @@ cd backend && pytest --cov=app --cov-report=term-missing   # бэкенд
 cd frontend && npm test                                      # фронтенд
 ```
 
-Число тестов и покрытие появляются в этом README и в резюме только после того,
-как их посчитал CI: см. [запуск CI](https://github.com/MeldanLess/kopilka/actions/workflows/ci.yml).
+Числа ниже посчитал CI, а не я: они взяты из отчёта прогона
+[workflow](https://github.com/MeldanLess/kopilka/actions/workflows/ci.yml).
+
+| | Тестов | Покрытие | Чем измерено |
+|---|---|---|---|
+| Бэкенд | **76** в 7 файлах | **85%** с учётом ветвлений | `pytest --cov=app` в CI, против настоящего PostgreSQL |
+| Фронтенд | **51** в 8 файлах | 74,5% строк, 81,8% ветвлений | `vitest run --coverage` в CI |
+
+Тесты бэкенда идут против настоящего экземпляра PostgreSQL, а не против
+SQLite: `NUMERIC` для денег, нативные `enum`, колонки `UUID` и внешние ключи с
+`RESTRICT` — это ровно то, что SQLite проверить не даст.
 
 ---
 
