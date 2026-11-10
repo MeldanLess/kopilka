@@ -47,12 +47,18 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${BASE_URL}${path}`, {
-    method,
-    headers,
-    signal,
-    body: form ?? (body === undefined ? undefined : JSON.stringify(body)),
-  });
+  const init: RequestInit = { method, headers };
+  // `exactOptionalPropertyTypes` запрещает писать `undefined` в необязательные
+  // поля — поэтому необязательные куски добавляем по одному.
+  if (signal !== undefined) {
+    init.signal = signal;
+  }
+  const requestBody = form ?? (body === undefined ? undefined : JSON.stringify(body));
+  if (requestBody !== undefined) {
+    init.body = requestBody;
+  }
+
+  const response = await fetch(`${BASE_URL}${path}`, init);
 
   // У 204 нет тела, которое можно разобрать, а `response.json()` падает на
   // пустом теле.
@@ -98,7 +104,12 @@ export async function download(
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${BASE_URL}${path}`, { headers, signal });
+  const init: RequestInit = { headers };
+  if (signal !== undefined) {
+    init.signal = signal;
+  }
+
+  const response = await fetch(`${BASE_URL}${path}`, init);
   if (!response.ok) {
     throw new ApiError(response.status, `Загрузка не удалась: код ${response.status}`, null);
   }
