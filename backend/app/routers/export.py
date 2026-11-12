@@ -40,6 +40,22 @@ BOM = codecs.BOM_UTF8.decode("utf-8")
 
 KIND_LABELS = {Kind.INCOME: "Доход", Kind.EXPENSE: "Расход"}
 
+#: Знаки, с которых Excel и LibreOffice считают ячейку формулой.
+#:
+#: Категория или заметка может начинаться с ``=``, ``+``, ``-``, ``@`` — и
+#: тогда при открытии файла таблица выполнит это как формулу. В худшем случае
+#: пользователь сам себе запускает макрос из чужой вкладки. Знак апострофа
+#: перед текстом превращает ячейку в обычный текст: Excel показывает его при
+#: редактировании, но не выполняет.
+FORMULA_PREFIXES = ("=", "+", "-", "@", "\t", "\r")
+
+
+def _safe_cell(value: str) -> str:
+    """Экранирует значение, которое таблица приняла бы за формулу."""
+    if value.startswith(FORMULA_PREFIXES):
+        return f"'{value}"
+    return value
+
 
 def _period_label(date_from: date | None, date_to: date | None) -> str:
     """Подпись периода для имени файла — только латиница и цифры.
@@ -70,9 +86,9 @@ def _build_csv(transactions: list[Transaction], categories: dict[uuid.UUID, str]
             [
                 transaction.occurred_on.isoformat(),
                 KIND_LABELS[transaction.kind],
-                categories.get(transaction.category_id, ""),
+                _safe_cell(categories.get(transaction.category_id, "")),
                 _format_amount(transaction.amount),
-                transaction.note or "",
+                _safe_cell(transaction.note or ""),
             ]
         )
     return buffer.getvalue()

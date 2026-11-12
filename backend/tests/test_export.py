@@ -77,6 +77,24 @@ def test_export_labels_income_and_expense(
     assert kinds == {"Доход", "Расход"}
 
 
+def test_export_escapes_formula_in_note(
+    auth_client: TestClient, expense_category, user, make_transaction
+) -> None:
+    """Заметка, начинающаяся с `=`, не должна стать формулой в Excel."""
+    make_transaction(
+        owner_id=user.id,
+        category_id=expense_category.id,
+        amount="10.00",
+        occurred_on="2026-11-11",
+        note="=1+1",
+    )
+
+    response = auth_client.get("/export/transactions.csv")
+
+    rows = _rows(response)
+    assert rows[1][4] == "'=1+1"
+
+
 def test_export_respects_date_range(
     auth_client: TestClient, expense_category, user, make_transaction
 ) -> None:
