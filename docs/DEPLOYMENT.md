@@ -39,18 +39,20 @@ chmod 600 env.production
 
 ## 3. Образы
 
-Фронтенд собирается с адресом API, известным на момент сборки: Vite подставляет
-`VITE_API_URL` в код один раз, и в рантайме он уже не меняется.
+Фронтенд собирается на сервере: адрес API зашивается в бандл на этапе сборки
+(Vite подставляет `VITE_API_URL` в код один раз, и в рантайме он уже не
+меняется).
 
 ```bash
 docker compose -f docker-compose.prod.yml build \
   --build-arg VITE_API_URL=https://ваш-домен/api
 ```
 
-Если образы опубликованы в GitHub Container Registry, тяните их вместо сборки:
+Бэкенд — либо тянется из реестра (образы публикует рабочий процесс релиза
+при отправке тега), либо собирается на сервере:
 
 ```bash
-docker compose -f docker-compose.prod.yml pull
+docker compose -f docker-compose.prod.yml build api
 ```
 
 ## 4. База данных

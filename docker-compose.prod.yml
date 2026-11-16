@@ -33,6 +33,10 @@ services:
 
   api:
     image: ${API_IMAGE:-kopilka-api:latest}
+    # Пока образ не опубликован в реестре, его можно собрать на сервере:
+    #   docker compose -f docker-compose.prod.yml build api
+    build:
+      context: ./backend
     container_name: kopilka-api
     restart: unless-stopped
     env_file:
