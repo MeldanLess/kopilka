@@ -1,0 +1,83 @@
+# Боевой стек «Копилки»: PostgreSQL + API + фронтенд.
+#
+#   docker compose -f docker-compose.prod.yml up -d
+#
+# Чем отличается от стека разработки и почему:
+#   * база не публикуется на хост — с ней общается только API
+#   * секреты приходят из файла вне репозитория и никогда отсюда
+#   * API работает без --reload и без подключённых исходников
+#   * фронтенд собирается с адресом API, известным на момент сборки:
+#     адрес зашивается в бандл, и в рантайме он уже не меняется
+#   * база накатывается миграциями перед стартом API, а не из кода
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: kopilka-db
+    restart: unless-stopped
+    env_file:
+      - ./env.production
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    # Без `ports:` — попасть внутрь можно только из контейнера API в этой сети.
+
+  api:
+    image: ${API_IMAGE:-kopilka-api:latest}
+    container_name: kopilka-api
+    restart: unless-stopped
+    env_file:
+      - ./env.production
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      ENVIRONMENT: production
+      LOG_FORMAT: json
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000 --proxy-headers --forwarded-allow-ips='*'"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    # Наружу API не выставлен: его выпускает nginx на хосте.
+
+  frontend:
+    # Фронтенд собирается на сервере, а не тянется из реестра: адрес API
+    # зашивается в бандл на этапе сборки, и менять его в рантайме нельзя.
+    #   docker compose -f docker-compose.prod.yml build frontend
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL:-https://tracker.example.com/api}
+    container_name: kopilka-frontend
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      # Только localhost: наружу этот порт не выставлен.
+      - "127.0.0.1:8080:80"
+
+  # nginx в этом файле нет: на сервере он установлен как системный сервис, а не
+  # запускается контейнером — тогда certbot обновляет сертификаты TLS без
+  # перезапуска контейнера. Подробнее в docs/DEPLOYMENT.md.
+
+volumes:
+  postgres_data:

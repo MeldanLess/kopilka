@@ -1,0 +1,20 @@
+# Таймер резервного копирования базы «Копилки».
+#
+#   sudo cp deploy/kopilka-backup.timer /etc/systemd/system/
+#   sudo systemctl enable --now kopilka-backup.timer
+#   systemctl list-timers kopilka-backup.timer
+#
+# Время выбрано не круглое: в 03:00 по UTC ночные задания сходятся, и сервер
+# под нагрузкой. Здесь же `RandomizedDelaySec` разводит копирования разных
+# установок по времени.
+
+[Unit]
+Description=Ежедневная резервная копия базы «Копилки»
+
+[Timer]
+OnCalendar=*-*-* 03:41:00
+Persistent=true
+RandomizedDelaySec=15m
+
+[Install]
+WantedBy=timers.target
