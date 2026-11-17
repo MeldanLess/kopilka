@@ -29,7 +29,7 @@ npm-debug.log*
 *.key
 
 # Файл с паролем базы и ключом подписи JWT для боевого стека. В
-# репозитории лежит только шаблон deploy/env.production.example.
+# репозитории лежит только шаблон deploy/.env.example.
 env.production
 backups/
 

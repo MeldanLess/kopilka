@@ -20,6 +20,10 @@ Type=oneshot
 RemainAfterExit=yes
 WorkingDirectory=/opt/kopilka
 
+# Переменные из `.env` нужны compose для подстановки `${ПЕРЕМЕННАЯ}` — без
+# них логин и пароль базы подставятся пустыми.
+EnvironmentFile=/opt/kopilka/.env
+
 # `up -d` возвращается, как только контейнеры запущены; сам API дожидается,
 # пока база отрапортует о состоянии healthy, и только потом начинает отвечать.
 ExecStart=/usr/bin/docker compose -f docker-compose.prod.yml up -d

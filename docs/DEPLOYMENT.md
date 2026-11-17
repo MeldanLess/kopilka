@@ -19,11 +19,11 @@ sudo chown "$USER" /opt/kopilka
 git clone https://github.com/MeldanLess/kopilka.git /opt/kopilka
 cd /opt/kopilka
 
-cp deploy/env.production.example env.production
-chmod 600 env.production
+cp deploy/.env.example .env
+chmod 600 .env
 ```
 
-Заполните `env.production`:
+Заполните `.env`:
 
 | Переменная | Откуда взять |
 |---|---|
@@ -31,11 +31,12 @@ chmod 600 env.production
 | `SECRET_KEY` | `python -c "import secrets; print(secrets.token_urlsafe(48))"` |
 | `CORS_ORIGINS` | адрес, с которого ходит браузер (для same-origin не нужен) |
 | `VITE_API_URL` | `https://ваш-домен/api` — адрес зашивается в бандл фронтенда |
-| `API_IMAGE`, `FRONTEND_IMAGE` | теги образов, опубликованных рабочим процессом релиза |
+| `API_IMAGE` | тег образа бэкенда, опубликованного рабочим процессом релиза |
 
-> Файл называется `env.production` и лежит **в корне репозитория**: боевой
-> compose-файл ищет переменные по пути `./env.production`. Если положить файл
-> в `deploy/`, compose не найдёт его и не запустится.
+> Файл называется `.env` и лежит **в корне репозитория**: compose берёт из
+> него значения для подстановки `${ПЕРЕМЕННАЯ}` (логин и пароль базы, адрес
+> API для фронтенда), а `env_file` отдаёт их контейнеру. Файл с другим именем
+> попал бы только внутрь контейнера — и подстановка осталась бы пустой.
 
 ## 3. Образы
 
